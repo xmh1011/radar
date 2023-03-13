@@ -1,0 +1,27 @@
+result:  FF FF 11 11 36 00 00 00 00 00 E1 07 08 00 07 00 14 00 07 00 03 00 2C 00 9F 00 00 00 02 91 00 00 BD 13 00 00 6B 5B 4E 4A 1F 00 A4 92 B2 48 10 20 5A 16 00 01 F7 F7
+Header:  FFFF
+Tag:  1111
+Len:  3600
+SendNode:  0000
+ReceiveNode:  0000
+Time:  E107080007001400070003002C009F00
+Time:  9223372036854775807
+Order:  0000
+Order:  0
+Batch:  02910000
+Batch:  43057152
+Distance:  BD130000
+Distance:  3172139008
+Orientation:  6B5B
+Orientation:  27483
+Course:  4E4A
+Course:  20042
+Speed:  1F00
+Speed:  7936
+Longitude:  A492B248
+Longitude:  2761077320
+Latitude:  10205A16
+Latitude:  270555670
+Method:  00
+Status:  01
+Tail:  F7F7
