@@ -29,7 +29,6 @@ func main() {
 	
 	for {
 		func() {
-			
 			data, err := udp.ReceiveData(UdpAddr, UdpPort)
 			if data == nil {
 				fmt.Printf("Failed to receive data!")

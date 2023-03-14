@@ -12,6 +12,7 @@ import (
 var UdpAddr = "localhost"
 var UdpPort = 8000
 
+// 测试代码，模拟通过udp协议不断发送数据
 func main() {
 	// 设置UDP地址
 	serverAddr, err := net.ResolveUDPAddr("udp", UdpAddr+":"+strconv.Itoa(UdpPort))
@@ -47,6 +48,7 @@ func main() {
 				fmt.Println("Close failed:", err)
 				return
 			}
+			return
 		}(conn)
 		_, err = conn.Write([]byte(temp))
 		if err != nil {

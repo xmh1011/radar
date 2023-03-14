@@ -24,7 +24,7 @@ func ReceiveData(UdpAddr string, UdpPort int) (data []string, err error) {
 	for {
 		buffer := make([]byte, 1024)
 		n, _, err := conn.ReadFromUDP(buffer)
-		conn.Close()
+		err = conn.Close()
 		if err != nil {
 			return nil, err
 		}

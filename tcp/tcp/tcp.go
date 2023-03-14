@@ -43,11 +43,16 @@ func ReceiveDataTCP(TcpAddr string, TcpPort int) (data []string, err error) {
 
 func handle(conn net.Conn, data []string) ([]string, error) {
 	
-	defer conn.Close()
+	defer func(conn net.Conn) {
+		err := conn.Close()
+		if err != nil {
+			return
+		}
+	}(conn)
 	buffer := make([]byte, 124)
 	
 	n, err := conn.Read(buffer)
-	conn.Close()
+	err = conn.Close()
 	if err != nil {
 		return nil, err
 	}

@@ -15,6 +15,7 @@ func ReadDataFromFile(filename string) (data []string, err error) {
 	if err != nil {
 		return nil, fmt.Errorf("open file failed: %v", err)
 	}
+	
 	defer func(file *os.File) {
 		err := file.Close()
 		if err != nil {
