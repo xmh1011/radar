@@ -22,6 +22,7 @@ func main() {
 	err := pkg.CreateDatabase(db.Database, db.URL)
 	
 	if err != nil {
+		fmt.Printf("Error creating database:")
 		log.Fatal(err)
 		return
 	}
@@ -47,13 +48,14 @@ func main() {
 				cnos := pkg.HandleData(v)
 				CnosData = "radar" + "," + "Header=" + cnos.Header + "," + "SendNode=" + cnos.SendNode + "," + "ReceiveNode=" + cnos.ReceiveNode + "," + "Method=" + cnos.Method + "," + "Status=" + cnos.Status + "," + "Tail=" + cnos.Tail + " " + "Time=" + Process(cnos.Time) + "," + "Order=" + Process(cnos.Order) + "," + "Batch=" + Process(cnos.Batch) + "," + "Distance=" + Process(cnos.Distance) + "," + "Orientation=" + Process(cnos.Orientation) + "," + "Course=" + Process(cnos.Course) + "," + "Speed=" + Process(cnos.Speed) + "," + "Longitude=" + Process(cnos.Longitude) + "," + "Latitude=" + Process(cnos.Latitude) + " " + strconv.FormatInt(time.Now().UnixNano(), 10)
 				// 将数据写入到CnosDB中
-				err := pkg.WriteDataToCnosDB(CnosData, CnosURL, CnosDatabase)
+				err := pkg.WriteDataToCnosDB(CnosData, db.URL, db.Database)
 				if err != nil {
 					fmt.Printf("Error writing:")
 					log.Fatal(err)
 					return
 				}
 			}
+			
 		}()
 	}
 }

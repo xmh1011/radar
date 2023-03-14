@@ -4,6 +4,8 @@ import (
 	"strconv"
 )
 
+const Length = 108
+
 type CnosData struct {
 	Measurement string
 	Header      string // 报头

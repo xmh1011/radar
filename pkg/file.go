@@ -2,40 +2,42 @@ package pkg
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strings"
 )
 
 // 从txt文件中读取数据
-func ReadDataFromFile(filename string) (data []string) {
+func ReadDataFromFile(filename string) (data []string, err error) {
 	var result string
 	file, err := os.Open(filename)
 	if err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("open file failed: %v", err)
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(file)
 	
 	scanner := bufio.NewScanner(file)
 	
 	for scanner.Scan() {
 		result = scanner.Text()
 	}
-	// fmt.Println("result: ", result)
+	
 	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("scan file failed: %v", err)
 	}
-	// // 将result中的数据按照空格分割
-	// temp := strings.Split(result, " ")
-	// // 将temp中的数据每54位分割一次，存储到data中
-	// fmt.Println("temp: ", temp)
-	// fmt.Println("len(temp): ", len(temp))
-	// 将result中的空格删除，变成新的字符串
+	
 	result = strings.Replace(result, " ", "", -1)
+	
 	// 将result中的数据，每108位分割一次，存储到data中
 	for i := 0; i < len(result); i += Length {
-		// data = append(data, strings.Join(result[i:i+Length], ""))
 		data = append(data, result[i:i+Length])
 	}
-	return data
+	
+	return data, nil
 }

@@ -18,7 +18,12 @@ func ReceiveDataTCP(TcpAddr string, TcpPort int) (data []string, err error) {
 	}
 	
 	// 关闭监听通道
-	defer listener.Close()
+	defer func(listener net.Listener) {
+		err := listener.Close()
+		if err != nil {
+			return
+		}
+	}(listener)
 	
 	for {
 		// 进行通道监听

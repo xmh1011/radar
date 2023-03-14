@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -34,20 +35,25 @@ func CreateDatabase(database string, url string) error {
 	
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	if err != nil {
-		fmt.Println("Error creating request: %v", err)
+		return fmt.Errorf("Error creating request: %v", err)
 	}
 	
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Println("Error making request:", err)
+		return fmt.Errorf("Error making request: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Println("Error closing body:", err)
+		}
+	}(resp.Body)
 	
 	// 检查响应状态码
 	if resp.StatusCode != http.StatusOK {
-		fmt.Println("CnosDB create database error: %s", resp.Status)
+		return fmt.Errorf("CnosDB create database error: %s", resp.Status)
 	}
 	
 	return err
@@ -74,11 +80,16 @@ func WriteDataToCnosDB(data string, url string, database string) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error making request: %s", err)
 	}
 	
 	// 关闭响应体
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Println("Error closing body:", err)
+		}
+	}(resp.Body)
 	
 	// 检查响应状态码
 	if resp.StatusCode != http.StatusNoContent {
