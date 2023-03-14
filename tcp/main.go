@@ -15,31 +15,14 @@ var TcpAddr = "localhost"
 var TcpPort = 8000
 var Length = 108
 
-// func main() {
-// 	var FilePath = "/Users/xiaominghao/code/radar/"
-// 	var FileName = "radar.txt"
-//
-// 	filename := FilePath + FileName
-// 	data := ReadDataFromFile(filename)
-// 	// fmt.Println("1.data: ", data)
-// 	err := Server(TcpAddr, TcpPort, data)
-// 	fmt.Println(1111)
-// 	if err != nil {
-// 		fmt.Errorf("Error: %s", err)
-// 	}
-// }
-
+// 测试代码，模拟通过tcp协议不断发送数据
 func main() {
+	
 	var FilePath = "/Users/xiaominghao/code/radar/"
 	var FileName = "radar.txt"
 	
 	filename := FilePath + FileName
 	data := ReadDataFromFile(filename)
-	// 固定端口
-	// _, err := net.Listen("tcp", TcpAddr+":"+strconv.Itoa(TcpPort))
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 	
 	for {
 		conn, err := net.Dial("tcp", TcpAddr+":"+strconv.Itoa(TcpPort))
