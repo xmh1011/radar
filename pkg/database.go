@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 )
 
 // CnosDB 数据结构
@@ -28,31 +27,35 @@ func NewCnosDB(url, database string) *CnosDB {
 func CreateDatabase(database string, url string) error {
 	
 	// 创建一个POST请求，将创建指令作为URL编码的数据发送
-	req, err := http.NewRequest("POST", url+"/query", strings.NewReader("q=CREATE DATABASE "+database))
+	// 设置请求参数
+	url = url + "/query"
+	query := "CREATE DATABASE " + database
+	data := []byte(fmt.Sprintf("q=%s", query))
+	
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	if err != nil {
-		panic(err)
+		fmt.Println("Error creating request: %v", err)
 	}
 	
-	// 添加必要的头信息
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	
-	// 发送请求并读取响应
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		panic(err)
+		fmt.Println("Error making request:", err)
 	}
 	defer resp.Body.Close()
 	
 	// 检查响应状态码
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("CnosDB create database error: %s", resp.Status)
+		fmt.Println("CnosDB create database error: %s", resp.Status)
 	}
 	
-	return nil
+	return err
 }
 
 // 写入数据到 CnosDB
 func WriteDataToCnosDB(data string, url string, database string) error {
+	
 	_, err := json.Marshal(data)
 	if err != nil {
 		return fmt.Errorf("Invalid data: %s", err)

@@ -34,7 +34,8 @@ func main() {
 	var FileName = "radar.txt"
 	
 	filename := FilePath + FileName
-	data := ReadDataFromFile(filename) // 固定端口
+	data := ReadDataFromFile(filename)
+	// 固定端口
 	// _, err := net.Listen("tcp", TcpAddr+":"+strconv.Itoa(TcpPort))
 	// if err != nil {
 	// 	log.Fatal(err)

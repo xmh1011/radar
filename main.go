@@ -1,15 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"radar/pkg"
-	"radar/udp"
+	"radar/udp/udp"
 	"strconv"
 	"time"
 )
 
-var UdpAddr = "37.100.1.29"
-var UdpPort = 12345
+var UdpAddr = "127.0.0.1"
+var UdpPort = 8000
 var CnosURL = "http://localhost:8086"
 var CnosDatabase = "radar"
 
@@ -18,15 +19,15 @@ func main() {
 	// 创建新的数据库定义
 	db := pkg.NewCnosDB(CnosURL, CnosDatabase)
 	// 在CnosDB中创建数据库
-	err := pkg.CreateDatabase(db.URL, db.Database)
+	err := pkg.CreateDatabase(db.Database, db.URL)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 	for {
-		// fmt.Println(1)
-		go func() {
-			// fmt.Println(2)
+		fmt.Println(1)
+		func() {
+			fmt.Println(2)
 			data, err := udp.ReceiveData(UdpAddr, UdpPort)
 			if data == nil {
 				log.Println("接收数据失败")
