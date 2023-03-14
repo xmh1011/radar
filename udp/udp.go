@@ -1,8 +1,9 @@
-package pkg
+package udp
 
 import (
 	"fmt"
 	"net"
+	"radar/pkg"
 	"strconv"
 	"strings"
 )
@@ -43,8 +44,8 @@ func ReceiveData(UdpAddr string, UdpPort int) (data []string, err error) {
 		messages = append(messages, msg)
 		// 将messages中的数据每108位分割一次，存储到data中
 		// 将result中的空格删除，变成新的字符串
-		for i := 0; i < len(messages); i += Length {
-			data = append(data, strings.Join(messages[i:i+Length], ""))
+		for i := 0; i < len(messages); i += pkg.Length {
+			data = append(data, strings.Join(messages[i:i+pkg.Length], ""))
 			// data = append(data, messages[i:i+Length]...)
 		}
 		return data, nil
