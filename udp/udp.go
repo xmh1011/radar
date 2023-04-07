@@ -28,7 +28,6 @@ func ReceiveData(UdpAddr string, UdpPort int) (data []string, err error) {
 		if err != nil {
 			return nil, err
 		}
-		
 		// 去掉数据中的空格
 		msg := strings.Replace(string(buffer[0:n]), " ", "", -1)
 		// 将处理后的数据存储到字符串数组中
