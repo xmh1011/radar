@@ -4,10 +4,13 @@ import (
 	"encoding/hex"
 	"math"
 	"strconv"
+	"sync"
 	"time"
 )
 
 const Length = 108
+
+var mu sync.Mutex
 
 type CnosData struct {
 	Measurement string
@@ -30,16 +33,15 @@ type CnosData struct {
 	Tail        string // 报尾   // 数据长度
 }
 
-// 处理数据函数，将数据分割成各个部分
+// HandleData 处理数据函数，将数据分割成各个部分
 func HandleData(data string) CnosData {
+	mu.Lock()
 	cnos := &CnosData{}
 	cnos.Header = data[0:4]
 	cnos.Tag = data[4:8]
 	cnos.Len = data[10:12] + data[8:10]
 	cnos.SendNode = data[14:16] + data[12:14]
 	cnos.ReceiveNode = data[18:20] + data[16:18]
-	// TODO: 处理时间
-	cnos.Time = GetTime(data[20:52])
 	cnos.Time = ParseTime(data[20:52])
 	cnos.Order = data[54:56] + data[52:54]
 	cnos.Batch = data[62:64] + data[60:62] + data[58:60] + data[56:58]
@@ -52,11 +54,8 @@ func HandleData(data string) CnosData {
 	cnos.Method = data[100:102]
 	cnos.Status = data[102:104]
 	cnos.Tail = data[104:]
+	mu.Unlock()
 	return *cnos
-}
-
-func GetTime(s string) int64 {
-	return ParseTime(s)
 }
 
 // HexToDec64 将32位的十六进制数据转化为十进制
@@ -69,16 +68,16 @@ func HexToDec64(hex string) int64 {
 }
 
 func ParseTime(s string) int64 {
-	
+
 	data, err := hex.DecodeString(s)
-	
+
 	if err != nil {
 		panic(err)
 	}
-	
-	// 将字节数组转换为SYSTEMTIME结构体
+
+	// 将字节数组转换为SYSTEM TIME结构体
 	if len(data) != 16 {
-		panic("invalid SYSTEMTIME data")
+		panic("invalid SYSTEM TIME data")
 	}
 	st := SystemTime{
 		wYear:         uint16(data[0]) | uint16(data[1])<<8,
@@ -90,13 +89,13 @@ func ParseTime(s string) int64 {
 		wSecond:       uint16(data[12]) | uint16(data[13])<<8,
 		wMilliseconds: uint16(data[14]) | uint16(data[15])<<8,
 	}
-	
+
 	// 将SYSTEMTIME结构体转换为time.Time类型
 	utc := time.Date(int(st.wYear), time.Month(st.wMonth), int(st.wDay), int(st.wHour), int(st.wMinute), int(st.wSecond), int(st.wMilliseconds)*1000000, time.UTC)
-	
+
 	// 将utc转化为纳秒级时间戳输出
 	return utc.UnixNano()
-	
+
 }
 
 type SystemTime struct {

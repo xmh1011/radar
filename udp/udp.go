@@ -6,22 +6,26 @@ import (
 	"strings"
 )
 
-func ReceiveData(UdpAddr string, UdpPort int) (data []string, err error) {
-	
+func ReceiveData(UdpAddr string, UdpPort int) ([]string, error) {
+
+	var err error
+
 	// 创建UDP监听地址
 	addr, err := net.ResolveUDPAddr("udp", UdpAddr+":"+strconv.Itoa(UdpPort))
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// 创建UDP监听连接
 	conn, err := net.ListenUDP("udp", addr)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// 接收数据并处理
 	for {
+
+		var data []string
 		buffer := make([]byte, 1024)
 		n, _, err := conn.ReadFromUDP(buffer)
 		err = conn.Close()
@@ -32,8 +36,9 @@ func ReceiveData(UdpAddr string, UdpPort int) (data []string, err error) {
 		msg := strings.Replace(string(buffer[0:n]), " ", "", -1)
 		// 将处理后的数据存储到字符串数组中
 		data = append(data, msg)
-		
+
 		return data, err
+
 	}
-	
+
 }
