@@ -24,6 +24,7 @@ type Options struct {
 	dbName  string
 }
 
+// NewOptions returns an Options with default parameters
 func NewOptions() *Options {
 	return &Options{
 		Stderr: os.Stderr,
@@ -47,38 +48,28 @@ func Run() *cobra.Command {
 	c := &cobra.Command{
 		Use:  "radar",
 		Long: "receive radar data and restore to database",
-		CompletionOptions: cobra.CompletionOptions{
-			DisableDefaultCmd:   true,
+		CompletionOptions: cobra.CompletionOptions{ // 自动补全
+			DisableDefaultCmd:   true, // 禁用默认命令
 			DisableNoDescFlag:   true,
 			DisableDescriptions: true},
 		Run: func(cmd *cobra.Command, args []string) {
 
-			var err error
-
+			err := opt.NewDatabase()
 			if err != nil {
+				log.Fatal(err)
 				return
 			}
 
 			if opt.PortNum < 1 {
 				fmt.Println("PortNum must be greater than 0")
 				return
-			}
-
-			err = opt.NewDatabase()
-			if err != nil {
-				log.Fatal(err)
-				return
-			}
-
-			if opt.PortNum == 1 {
-				err = opt.Handle()
+			} else if opt.PortNum == 1 {
+				err = opt.Handle() // 单线程处理
 				if err != nil {
 					return
 				}
-			}
-
-			if opt.PortNum > 1 {
-				err = opt.Handles()
+			} else {
+				err = opt.Handles() // 多线程处理
 				if err != nil {
 					return
 				}
@@ -156,20 +147,20 @@ func (opt *Options) Handles() error {
 	// 启动多个并发协程，每个协程负责从一个UDP连接接收数据并存储到对应的数组中
 	for i := 0; i < opt.PortNum; i++ {
 
+		// 为每个协程创建一个新的变量，防止协程并发时，i的值被覆盖
 		go func(idx int) {
 			for {
-
+				// 从UDP连接中读取数据
 				n, _, err := conns[idx].ReadFromUDP(dataArrays[idx])
 				if err != nil {
 					panic(err)
 				}
-
+				// 将数据转化为符合SQL行协议的数据
 				err = ProcessData(string(dataArrays[idx][:n]))
 				if err != nil {
 					fmt.Printf("Error writing: %s\n", err.Error())
 					return
 				}
-
 			}
 		}(i)
 

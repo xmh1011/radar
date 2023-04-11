@@ -24,7 +24,7 @@ func NewCnosDB(url, database string) *CnosDB {
 	}
 }
 
-// 在CnosDB中创建一个新的数据库
+// CreateDatabase 在CnosDB中创建一个新的数据库
 func CreateDatabase(database string, url string) error {
 
 	// 创建一个POST请求，将创建指令作为URL编码的数据发送
@@ -59,7 +59,7 @@ func CreateDatabase(database string, url string) error {
 	return err
 }
 
-// 写入数据到 CnosDB
+// WriteDataToCnosDB 写入数据到 CnosDB
 func WriteDataToCnosDB(data string, url string, database string) error {
 
 	mu.Lock()
